@@ -128,6 +128,11 @@ will get replaced with the name of the buffer being killed."
   :group 'tempbuf :type '(choice (const :tag "No message." nil)
 				 string))
 
+(defcustom tempbuf-kill-message-function nil
+  "Function used to deliver the message that a buffer was killed.
+If nil, use the default emacs messaging facility"
+  :group 'tempbuf :type 'function)
+
 (defcustom tempbuf-mode-hook nil
   "Hook run after tempbuf mode is activated in a buffer."
   :group 'tempbuf :type 'hook)
@@ -265,8 +270,7 @@ value."
 	    (kill-buffer buffer))
 	  (when tempbuf-kill-message
 	    (unless (buffer-live-p buffer)
-	      (message tempbuf-kill-message
-		       name))))))))
+          (funcall (or tempbuf-kill-message-function 'message) (format tempbuf-kill-message name)))))))))
 
 (defun tempbuf-post-command ()
   "Update `tempbuf-last-time'."
