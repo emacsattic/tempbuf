@@ -5,7 +5,7 @@
 
 ;; Author: Michele Bini <mibin@libero.it>
 ;; Created: 11 Sep 2001
-;; Version: 1.2
+;; Version: 1.4
 ;; Keywords: convenience
 
 ;; This is free software; you can redistribute it and/or modify it
@@ -25,9 +25,9 @@
 
 ;;; Commentary:
 
-;; This package implements tempbuf-mode, a minor mode that enables
-;; buffers to get automatically deleted in the background when it can
-;; be deduced that they are no longer of any use.
+;; Tempbuf-mode is a minor mode that enables buffers to get
+;; automatically deleted in the background when it can be deduced that
+;; they are no longer of any use.
 
 ;; It could be common for example to apply this mode to dired-mode
 ;; buffers or read-only buffers visiting files, relieving you from
@@ -42,11 +42,13 @@
 ;; processes will not get automatically deleted, but you can override
 ;; this behavior by customizing tempbuf-expire-hook.
 
+;; * Installation
+
 ;; To turn on this mode on dired buffers, put this line in your .emacs:
 
 ;;     (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
 
-;; I find it also very convenient to turn on this mode in emacs
+;; I find it also very convenient to turn on it on in emacs
 ;; customization buffers, W3 (Emacs' Web Browser) buffers, UNIX 'man'
 ;; documentation buffers, and any buffer with view-mode activated.
 
@@ -61,16 +63,19 @@
 
 ;;     (add-hook 'find-file-hooks 'turn-on-tempbuf-mode)
 
+;; * Tricks
+
 ;; You can set up things to make tempbuf-mode terminate idle
 ;; terminals:
 
-;; (defun my-term-on-tempbuf-expire ()
-;;   (when (get-buffer-process (current-buffer))
-;;     (term-send-eof)))
-;; (defun my-term-mode-patch ()
-;;   (turn-on-tempbuf-mode)
-;;   (add-hook 'tempbuf-expire-hook 'my-term-on-tempbuf-kill nil t))
-;; (add-hook 'term-mode-hook 'my-term-mode-patch)
+;;     (defun my-term-on-tempbuf-expire ()
+;;       (when (get-buffer-process (current-buffer))
+;;         (term-send-eof)))
+;;     (defun my-term-mode-patch ()
+;;       (turn-on-tempbuf-mode)
+;;       (add-hook 'tempbuf-expire-hook 'my-term-on-tempbuf-expire
+;;                 nil t))
+;;     (add-hook 'term-mode-hook 'my-term-mode-patch)
 
 ;; This way, a terminal emulator buffer will start receiving
 ;; periodic end-of-file signals if it does not seem to get any more
@@ -78,9 +83,9 @@
 ;; pending command (assuming that a well behaving shell is running on
 ;; that terminal).
 
-;; I plan to release new versions in the following locations:
+;; You may find new versions of tempbuf-mode via:
 ;; - http://www.emacswiki.org/cgi-bin/wiki.pl?TempbufMode
-;; - the gnu.emacs.sources newsgroup
+;; - http://gitorious.org/tempbuf-mode
 
 ;;; History:
 ;;
@@ -95,8 +100,10 @@
 ;;
 ;; 	* tempbuf.el (tempbuf-mode): Added "P" argument to
 ;; 	interactive, as it should be for a minor mode.
-;; 	(turn-on-tempbuf-mode): removed call to make-local-hook; do
-;; 	not alter tempbuf-minimum-timeout. Renamed from
+;; 	(turn-on-tempbuf-mode): Removed call to make-local-hook.
+;; 	Suggested by: Kim F. Storm.
+;; 	(turn-on-tempbuf-mode): Do not alter
+;; 	tempbuf-minimum-timeout.  Renamed from
 ;; 	tempbuf-mode-enable.
 ;; 	(turn-off-tempbuf-mode): Renamed from
 ;; 	tempbuf-mode-disable.
@@ -118,7 +125,7 @@
 ;;
 ;; 2001-12-04  Michele Bini  <mibin@libero.it>
 ;;
-;; 	First public release on the Emacs Wiki
+;; 	First public release on the Emacs Wiki.
 
 ;;; Code:
 
@@ -225,7 +232,7 @@ After mode activation, `tempbuf-mode-hook' is run."
 (defun tempbuf-grace (&optional ct)
   "Extend the life expectancy of the current buffer.
 
-The optional argument CT specifies a pre-calculated \"(current-time)\"
+The optional argument CT specifies a pre-calculated `current-time'
 value."
   (setq tempbuf-timeout
 	(+ tempbuf-minimum-timeout
