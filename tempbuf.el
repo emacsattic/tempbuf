@@ -1,5 +1,7 @@
 ;;; tempbuf.el --- kill unused buffers in the background
-;; Copyright (c) 2001, 2002 Michele Bini
+
+;; Copyright (c) 2001, 2002, 2011 Michele Bini
+;; Copyright (c) 2010 Eric Hanchrow
 
 ;; Author: Michele Bini <mibin@libero.it>
 ;; Created: 11 Sep 2001
@@ -81,6 +83,14 @@
 ;; - the gnu.emacs.sources newsgroup
 
 ;;; History:
+;;
+;; 2011-11-24  Michele Bini  <michele.bini@gmail.com>
+;;
+;;      * tempbuf.el: Added tempbuf-kill-message-function
+;;      (tempbuf-mode-hook): added tempbuf-kill-message-funtion.
+;;      Contributed by Eric Hanchrow (offby1) via the EmacsWiki,
+;;      with minor changes.
+;;
 ;; 2002-02-20  Michele Bini  <mibin@libero.it>
 ;;
 ;; 	* tempbuf.el (tempbuf-mode): Added "P" argument to
@@ -128,9 +138,8 @@ will get replaced with the name of the buffer being killed."
   :group 'tempbuf :type '(choice (const :tag "No message." nil)
 				 string))
 
-(defcustom tempbuf-kill-message-function nil
-  "Function used to deliver the message that a buffer was killed.
-If nil, use the default emacs messaging facility"
+(defcustom tempbuf-kill-message-function (function message)
+  "Function used to deliver the message that a buffer was killed."
   :group 'tempbuf :type 'function)
 
 (defcustom tempbuf-mode-hook nil
@@ -270,7 +279,7 @@ value."
 	    (kill-buffer buffer))
 	  (when tempbuf-kill-message
 	    (unless (buffer-live-p buffer)
-          (funcall (or tempbuf-kill-message-function 'message) (format tempbuf-kill-message name)))))))))
+          (funcall tempbuf-kill-message-function (format tempbuf-kill-message name)))))))))
 
 (defun tempbuf-post-command ()
   "Update `tempbuf-last-time'."
