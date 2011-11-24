@@ -5,7 +5,7 @@
 
 ;; Author: Michele Bini <mibin@libero.it>
 ;; Created: 11 Sep 2001
-;; Version: 1.0
+;; Version: 1.2
 ;; Keywords: convenience
 
 ;; This is free software; you can redistribute it and/or modify it
